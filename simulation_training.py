@@ -38,9 +38,8 @@ def training_model_VDN(arg, milestones):
     model = model.float()
     train_paths = np.array(sorted(gd.load_data("datasets", train_sets)))
     ran = bool(arguments.randomize)
-    noise = bool(arguments.noise)
     clipping = bool(arguments.clipping)
-    data_obj = gd.TrainDataset(train_paths, randomize=ran, extra_noise=noise, patch_size=arg.patch)
+    data_obj = gd.TrainDataset(train_paths, randomize=ran, patch_size=arg.patch)
     if torch.cuda.is_available():
         model.cuda()
         torch.backends.cudnn.benchmark = True
@@ -137,7 +136,6 @@ if __name__ == '__main__':
     parser.add_argument('--model_path', '-path', type=str, default="trained_models",
                         help='Folder to save trained models')
     parser.add_argument('--randomize', '-ran', type=int, default=1, help='use 1 for true, 0 for false')
-    parser.add_argument('--noise', '-noise', type=int, default=1, help='extra noise. use 1 for true, 0 for false')
     parser.add_argument('--log_path', '-log', type=str, default='model_training.log',
                         help='path of the log file from model loss')
     parser.add_argument('--snet', '-snet', type=int, default=5, help='Depth of SNet')

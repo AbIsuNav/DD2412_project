@@ -71,15 +71,14 @@ def get_patch_benchmark(image, patch_size):
 class TrainDataset(Dataset):
     """ class for dataloader"""
 
-    def __init__(self, images_paths, batch_size=64,patch_size=128, channels=3, iid=0, randomize=True, extra_noise=True):
+    def __init__(self, images_paths, batch_size=64,patch_size=128, channels=3, iid=0, randomize=True):
         # iid = 1 for iid , other value will be taken for not iid
         super(TrainDataset, self).__init__()
         self.data_paths = images_paths
-        self.sigma = random.uniform(0, 75)  # CHECK THIS VALUE!
+        self.sigma = random.uniform(0, 75)
         self.patch_size = patch_size
         self.iid = True if iid == 1 else False
         self.randomize = randomize
-        self.extra_noise = extra_noise
         self.sigma_max = 75
         self.channels = channels
         self.batch_size = batch_size
@@ -104,8 +103,8 @@ class TrainDataset(Dataset):
         sigma_arr = self.noise_not_iid()
         y = x + np.random.randn(H, W, C) * sigma_arr
         sigma_arr = image_flip(sigma_arr, np.random.randint(0, 8))
-        sigma_arr = np.tile(sigma_arr, (1, 1, self.channels))  # for training we always have 3 channels
-        sigma_arr = np.where(sigma_arr < 1e-10, 1e-10, sigma_arr)  # took this from the code paper. It removes values
+        sigma_arr = np.tile(sigma_arr, (1, 1, self.channels))
+        sigma_arr = np.where(sigma_arr < 1e-10, 1e-10, sigma_arr)
         # smaller than 1e-10
         sigma_arr = torch.tensor(sigma_arr)
         sigma_arr = sigma_arr.permute(2, 0, 1)
@@ -117,30 +116,17 @@ class TrainDataset(Dataset):
         x = torch.tensor(x).permute(2, 0, 1)
         return x.float(), y.float(), sigma_arr.float()
 
-    def noise_iid(self):
-        sigma_arr = np.ones((self.patch_size, self.patch_size))*(self.sigma / 255)
-        return sigma_arr[:, :, np.newaxis]
-
     def noise_not_iid(self):
-        if self.randomize:  # not explained in the paper, so we check this from paper code
+        if self.randomize:
             sigma = np.random.uniform(self.patch_size/4, self.patch_size/4*3)
             mu_x = np.random.uniform(0, self.patch_size)
             mu_y = np.random.uniform(0, self.patch_size)
-        else:  # our method
+        else:
             sigma = 50  # just a random number
             mu_x = self.patch_size//2
             mu_y = self.patch_size//2
         kernel = gm.gen_gaussian_noise(self.patch_size, mu_x, mu_y, sigma)
-        if self.extra_noise:  # there is no clear explanation for this on the paper, so we check the code and include it
-            self.sigma_max = 75  # from paper
-            top_limit = random.uniform(0, self.sigma_max/255.0)
-            low_limit = random.uniform(0, self.sigma_max/255.0)
-            if top_limit < low_limit:
-                top_limit, low_limit = low_limit, top_limit
-            top_limit += 5/255.0  # from paper, no explanation for this number
-            kernel_map = low_limit + (kernel - kernel.min()) / (kernel.max() - kernel.min()) * (top_limit - low_limit)
-        else:  # our method
-            kernel_map = (kernel - kernel.min()) / (kernel.max() - kernel.min())  # normalization of noise
+        kernel_map = (kernel - kernel.min()) / (kernel.max() - kernel.min())  # normalization of noise
         return np.square(kernel_map[:, :, np.newaxis])
 
 
@@ -302,7 +288,6 @@ class ValidationBenchmark(Dataset):
 
 
 if __name__ == '__main__':
-    # this is not working with the new stuff
     data_obj = TrainBenchmark()
     data = DataLoader(dataset=data_obj, drop_last=True, batch_size=5, shuffle=True)
     for i, batch_data in enumerate(data):
