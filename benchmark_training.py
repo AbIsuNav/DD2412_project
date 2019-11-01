@@ -125,7 +125,7 @@ def training_benchmark(arg, milestones):
             model.cuda()
             torch.backends.cudnn.benchmark = True
         for idx in range(obj_data.__len__()):
-            image, noisy = obj_data.__getitem__(idx)
+            noisy, image = obj_data.__getitem__(idx)
             ch, ht, wt = noisy.shape
             noisy = noisy.view(1, ch, ht, wt).cuda()
             image = image.cuda()
