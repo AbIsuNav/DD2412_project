@@ -15,7 +15,7 @@ For simulated noise:
 python simulation_training.py
 ```
 For benchmark train:
-- First obtain the training and validation data file by running:
+- First obtain the training and validation data files by running:
 ```bash
 python datasets/train_data_sidd.py
 ```

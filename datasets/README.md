@@ -2,7 +2,7 @@
 
 This folder contains some of the datasets used for training and validation of the VDN. The data used follows the reference of the [VDN](https://arxiv.org/pdf/1908.11314v2.pdf).
 
-Please refer to the original sources to more details about the data:
+Please refer to the original sources for more details:
 - [Waterloo](https://ece.uwaterloo.ca/~k29ma/exploration/)
 - [SIDD](https://www.eecs.yorku.ca/~kamel/sidd/)
 - [ImageNet](http://image-net.org/)
