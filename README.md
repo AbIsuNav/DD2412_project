@@ -4,6 +4,8 @@ This is final project from the course DD2412-Deep Learning, Advanced project.
 
 In this project we reproduce the experiments and conducted a study from the paper:
 - Zongsheng Yue, Hongwei Yong, Qian Zhao, Lei Zhang, and Deyu Meng. Variational denoising network: Toward blind noise modeling and removal. (NeurIPS, 2019) [arXiv](https://arxiv.org/pdf/1908.11314v2.pdf)
+
+Find our report here: [report](ADL_VDN.pdf)
 ## Requirements:
 * Python 3.7.* 
 * Pytorch 1.2.0
